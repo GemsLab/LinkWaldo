@@ -45,13 +45,17 @@ The script has already been run on the `yeast` dataset for five seeds.
 
 ## Data
 
-#### Dataset Format
+### Dataset Format
 
 ## Example usage (from `src/` dir)
 
 `python main.py -G yeast -sm static -em netmf -k 10000`
 
 `python main.py -G yeast -sm static -em netmf -k 10000 -SG False -CG False --bailout_tol 0.0`
+
+#### NMF+BAG baseline
+
+`python main.py -G yeast -m nmf+bag -k 10000 -bag_epsilon 1.0`
 
 ### Arguments
 
