@@ -1,4 +1,4 @@
-# PENminer
+# LinkWaldo
 
 ***COMING SOON: Link to paper, citation, and more documentation!***
 
