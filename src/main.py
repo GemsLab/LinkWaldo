@@ -44,7 +44,7 @@ def parse_args():
     parser.add_argument('--DG', '-DG', type=str2bool, default=True, required=False, help="Whether to use grouping DG.")
     parser.add_argument('--SG', '-SG', type=str2bool, default=True, required=False, help="Whether to use grouping SG.")
     parser.add_argument('--CG', '-CG', type=str2bool, default=True, required=False, help="Whether to use grouping CG.")
-    parser.add_argument('--bailout_tol', '-b_tol', type=float, default=0.25, required=False, help="The threshold for bailing out of a cell if the embeddings are uniformitive.")
+    parser.add_argument('--bailout_tol', '-b_tol', type=float, default=0.5, required=False, help="The threshold for bailing out of a cell if the embeddings are uniformitive.")
     parser.add_argument('--bag_epsilon', '-bag_epsilon', type=float, default=1.0, required=False, help="The epsilon for the NMF+BAG baseline.")
     parser.add_argument('--skip_output', '-skip_output', type=str2bool, default=False, required=False, help="If True, don't write the found pairs.")
     return parser.parse_args()
