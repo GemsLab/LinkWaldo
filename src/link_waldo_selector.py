@@ -99,8 +99,8 @@ class LinkWaldoSelector(Selector):
         total_diff = 0
         total = len(self.equiv_class_scores)
         for equiv_class, equiv_class_score in sorted(self.equiv_class_scores.items(), reverse=True, key=lambda it: it[-1]):
-            target = max(1, int(round(equiv_class_score * self.k)))
-            if target == 0 or len(self.pairs) == self.k:
+            kappa = max(1, int(round(equiv_class_score * self.k)))
+            if kappa == 0 or len(self.pairs) == self.k:
                 continue
             stdev = int(round(np.sqrt(self.k * equiv_class_score * (1 - equiv_class_score))))
             s1 = bucket_nodes[equiv_class[0]]
@@ -109,9 +109,9 @@ class LinkWaldoSelector(Selector):
             i += 1
             if verbosity > 0 and ((total < 625) or (i > 0 and i % 100 == 0)):
                 print((equiv_class[0], equiv_class[1]), i / len(self.equiv_class_scores))
-                print('|C| = {}, kapa = {}'.format(equiv_class_size, target))
-            res = self.add_pairs(s1, s2, equiv_class_size, target, stdev, equiv_class=equiv_class)
-            diff = target - len(res)
+                print('|C| = {}, kappa = {}'.format(equiv_class_size, kappa))
+            res = self.add_pairs(s1, s2, equiv_class_size, kappa, stdev, equiv_class=equiv_class)
+            diff = kappa - len(res)
             total_diff += diff
             tp = len(res.intersection(self.embeddings.test))
             self.pairs.update(res)
@@ -163,7 +163,7 @@ class LinkWaldoSelector(Selector):
                     pairs.add((v2, v1))
         return pairs
 
-    def add_pairs_exact(self, s1, s2, target, stdev):
+    def add_pairs_exact(self, s1, s2, kappa, stdev):
         pair_sim = dict()
         DistMat = 1 - np.dot(s1.nodeX, s2.nodeX.T)
 
@@ -178,24 +178,24 @@ class LinkWaldoSelector(Selector):
                 continue
             seen.add((i, j))
             if v1.name <= v2.name:
-                if len(pairs) < target - stdev:
+                if len(pairs) < kappa - stdev:
                     pairs.add((v1, v2))
-                elif len(seen) < target + stdev:
+                elif len(seen) < kappa + stdev:
                     self.global_pairs[(v1, v2)] = DistMat[i, j]
                 else:
                     self.alt_global_pairs[(v1, v2)] = DistMat[i, j]
             else:
-                if len(pairs) < target - stdev:
+                if len(pairs) < kappa - stdev:
                     pairs.add((v2, v1))
-                elif len(seen) < target + stdev:
+                elif len(seen) < kappa + stdev:
                     self.global_pairs[(v2, v1)] = DistMat[i, j]
                 else:
                     self.alt_global_pairs[(v2, v1)] = DistMat[i, j]
-            if len(seen) == target + stdev + stdev + stdev:
+            if len(seen) == kappa + stdev + stdev + stdev:
                 break
         return pairs
 
-    def add_pairs_approx(self, s1, s2, target, stdev, equiv_class_size):
+    def add_pairs_approx(self, s1, s2, kappa, stdev, equiv_class_size):
         if self.hash_funcs is None:
             self.hash_funcs = np.random.normal(size=(10000, self.embeddings.d))
         if s1.hash_codes is None:
@@ -217,18 +217,18 @@ class LinkWaldoSelector(Selector):
             max_depth = 20
         else:
             max_depth = 30
-        if target / equiv_class_size < 0.0001:
+        if kappa / equiv_class_size < 0.0001:
             num_trees = 5
-        elif target / equiv_class_size < 0.001:
+        elif kappa / equiv_class_size < 0.001:
             num_trees = 10
         else:
             num_trees = 25
-        lsh = LSHcustom(kapa=target, num_trees=num_trees, max_depth=max_depth, d=self.embeddings.d)
+        lsh = LSHcustom(kappa=kappa, num_trees=num_trees, max_depth=max_depth, d=self.embeddings.d)
         lsh.fit(s1.nodeX, s2.nodeX, s1.hash_codes, s2.hash_codes)
         seen = set()
         pairs = set()
         for v1, v2 in lsh.similar_pairs():
-            if len(seen) == target + stdev + stdev + stdev:
+            if len(seen) == kappa + stdev + stdev + stdev:
                 break
             v1, v2 = s1.id_to_node[v1], s2.id_to_node[v2]
             if (v1, v2) in self.embeddings.train or (v2, v1) in self.embeddings.train:
@@ -238,22 +238,22 @@ class LinkWaldoSelector(Selector):
                 continue
             seen.add((v1, v2))
             if v1.name <= v2.name:
-                if len(pairs) < target - stdev:
+                if len(pairs) < kappa - stdev:
                     pairs.add((v1, v2))
-                elif len(seen) < target + stdev:
+                elif len(seen) < kappa + stdev:
                     self.global_pairs[(v1, v2)] = 1 - np.dot(v1.emb, v2.emb)
                 else:
                     self.alt_global_pairs[(v1, v2)] = 1 - np.dot(v1.emb, v2.emb)
             else:
-                if len(pairs) < target - stdev:
+                if len(pairs) < kappa - stdev:
                     pairs.add((v2, v1))
-                elif len(seen) < target + stdev:
+                elif len(seen) < kappa + stdev:
                     self.global_pairs[(v2, v1)] = 1 - np.dot(v1.emb, v2.emb)
                 else:
                     self.alt_global_pairs[(v2, v1)] = 1 - np.dot(v1.emb, v2.emb)
         return pairs
 
-    def add_pairs_aa(self, s1, s2, target, stdev, equiv_class_size, equiv_class):
+    def add_pairs_aa(self, s1, s2, kappa, stdev, equiv_class_size, equiv_class):
         '''
         Add pairs from the equivalence class via the AA proximity model.
         '''
@@ -264,29 +264,29 @@ class LinkWaldoSelector(Selector):
             if v1 != v2 and (v1, v2) not in self.embeddings.train and (v2, v1) not in self.embeddings.train:
                 seen.add((v1, v2))
                 if v1.name <= v2.name:
-                    if len(pairs) < target - stdev:
+                    if len(pairs) < kappa - stdev:
                         pairs.add((v1, v2))
-                    elif len(seen) < target + stdev:
+                    elif len(seen) < kappa + stdev:
                         self.global_pairs[(v1, v2)] = 1 / score
                     else:
                         self.alt_global_pairs[(v1, v2)] = 1 / score
                 else:
-                    if len(seen) < target - stdev:
+                    if len(seen) < kappa - stdev:
                         pairs.add((v2, v1))
-                    elif len(seen) < target + stdev:
+                    elif len(seen) < kappa + stdev:
                         self.global_pairs[(v2, v1)] = 1 / score
                     else:
                         self.alt_global_pairs[(v2, v1)] = 1 / score
-            if len(pairs) == target + stdev + stdev + stdev:
+            if len(pairs) == kappa + stdev + stdev + stdev:
                 break
         return pairs
 
-    def add_pairs(self, s1, s2, equiv_class_size, target, stdev, equiv_class=None):
-        if target - stdev >= equiv_class_size:
+    def add_pairs(self, s1, s2, equiv_class_size, kappa, stdev, equiv_class=None):
+        if kappa - stdev >= equiv_class_size:
             return self.add_all(s1, s2)
         if self.embeddings.name == 'aa':
-            return self.add_pairs_aa(s1, s2, target, stdev, equiv_class_size, equiv_class)
+            return self.add_pairs_aa(s1, s2, kappa, stdev, equiv_class_size, equiv_class)
         if equiv_class_size < self.exact_search_tolerance:   
-            return self.add_pairs_exact(s1, s2, target, stdev)
+            return self.add_pairs_exact(s1, s2, kappa, stdev)
         else:
-            return self.add_pairs_approx(s1, s2, target, stdev, equiv_class_size)
+            return self.add_pairs_approx(s1, s2, kappa, stdev, equiv_class_size)
