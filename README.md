@@ -1,11 +1,17 @@
 # LinkWaldo
 
-***COMING SOON: Link to paper, citation, and more documentation!***
-
 Caleb Belth, Alican Büyükçakır, and Danai Koutra. _A Hidden Challenge of Link Prediction: Which Pairs to Check?_. IEEE International Conference on Data Mining (ICDM), November 2020. [[Link to the paper](https://quickshift.xyz/public/assets/documents/belth-2020-ICDM-LinkWaldo.pdf)]
 
 If used, please cite:
 ```bibtex
+@inproceedings{belth2020hidden,
+  title={A Hidden Challenge of Link Prediction: Which Pairs to Check?},
+  author={Belth, Caleb and B{\"u}y{\"u}k{\c{c}}ak{\i}r, Alican and Koutra, Danai},
+  booktitle={2020 IEEE International Conference on Data Mining (ICDM)},
+  pages={831--840},
+  year={2020},
+  organization={IEEE}
+}
 ```
 
 ## Setup
@@ -45,7 +51,9 @@ The script has already been run on the `yeast` dataset for five seeds.
 
 ## Data
 
-### Dataset Format
+`data/static/` contains the static graphs while `data/temporal/` contains the temporal graphs (Table II).
+
+Subdirectories `test/` and `train/` within each contain the graphs after removing test edges (see "Generating train/test splits secton" above).
 
 ## Example usage (from `src/` dir)
 
@@ -58,4 +66,43 @@ The script has already been run on the `yeast` dataset for five seeds.
 `python main.py -G yeast -m nmf+bag -k 10000 -bag_epsilon 1.0`
 
 ### Arguments
+
+
+`--graph / -G {graph_name} (Required)` The graph on which to run.
+
+`--k / -k {budget} (Optional; Default = 10M)` The budget (how many pairs to output). 
+
+`--method / -m {method} (Optional; Default = 'LinkWaldo')` Specifies the method (one of `'LinkWaldo', 'lapm', 'cn', 'js', 'aa', 'nmf+bag'`).
+
+`--embedding_method {the proximity method to use}` Specifies the proximity method to use within equivalence classes (one of `'netmf1', 'netmf2', 'bine', 'aa'`).
+
+`--DG / -DG {True/False} (Optional; Default = True)` Whether or not to use Degree Grouping (Sec. IV.A).
+
+`--SG / -SG {True/False} (Optional; Default = True)` Whether or not to use Structural Grouping (Sec. IV.A).
+
+`--CG / -CG {True/False} (Optional; Default = True)` Whether or not to use Community Grouping (Sec. IV.A).
+
+`--exact_search_tolerance / -tol (Optional; Default = 25M)` The tolerance for exactly vs. approximately searching equivlance classes (Sec. IV.C and V.D).
+
+`--bailout_tol / -b_tol (Optional; Default = 0.5)` (Sec. IV.C and V.D)
+
+`--sampling_method / -sm {'static'/'temporal'}` Whether the graph is temporal or static (Table II).
+
+`--num_groups / -num_groups {int}` The number of groups to use for a grouping (Sec. V.D).
+
+`--num_groups_alt / -num_groups_alt {int}` If there are multiple groupings, this allows non-DG groupings to use a different number of groups (Sec. V.D).
+
+`--percent_test / -test {int}` The percentage of the graph used for evalution (see "Generating train/test splits secton" above).
+
+`--seed / -s` The seed to run on (see "Generating train/test splits secton" above).
+
+`--bipartite / -bip {True/False}` Whether or not the graph is bipartite.
+
+`--output_override / -oo {None or file_path}` If None, the output will go to its default location (`data/{sample_method}/`), otherwise it will go to the path specified by this parameter.
+
+`--bag_epsilon / -bag_epsilon {float} (Optional; Default = 1.0)` The epsilon parameter for the NMF+Bag baseline (Sec. V.B).
+
+`--skip_output / -skip_output {True/False} (Optional; Default = False)` If True, not output files will be created.
+
+`--force_emb / force_emb {True / False} (Optiona; Default = False)` If True, then even if the embeddings have already been generated for the input graph, they will be re-generated.
 
