@@ -13,7 +13,6 @@ from sg_selector import SGSelector
 from cg_selector import CGSelector
 from bagging_ensemble import BaggingEnsemble
 import networkx as nx
-import cProfile
 import argparse
 import os
 
@@ -28,7 +27,6 @@ def parse_args():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--graph', '-G', type=str, required=True, help="The name of the graph to use.")
-    parser.add_argument('--profile', '-p', type=str2bool, default=False, required=False, help="If True, then use cProfile.")
     parser.add_argument('--method', '-m', type=str, required=False, default='LinkWaldo', help="The method to use to select pairs.")
     parser.add_argument('--embedding_method', '-em', type=str, default='netmf2', required=False, help="The embedding method to use.")
     parser.add_argument('--k', '-k', type=int, default=10000000, required=False, help="How many pairs to return.")
@@ -153,7 +151,4 @@ def main(args, jupyter=False):
 
 if __name__ == "__main__":
     args = parse_args()
-    if not args.profile:
-        main(args)
-    else:
-        cProfile.run('main(args)')
+    main(args)

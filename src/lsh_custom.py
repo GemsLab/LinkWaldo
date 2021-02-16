@@ -4,11 +4,11 @@ import random
 
 class LSHcustom:
     '''
-    Uses random hyperplane LSH to find the kapa most similar pairs with high probability.
+    Uses random hyperplane LSH to find the kappa most similar pairs with high probability.
     '''
-    def __init__(self, kapa, num_trees=10, max_depth=12, d=128, verbosity=10000):
+    def __init__(self, kappa, num_trees=10, max_depth=12, d=128, verbosity=10000):
         self.verbosity = verbosity
-        self.target = 5 * kapa
+        self.target = 5 * kappa
         self.d = d
         self.num_trees = num_trees
         self.max_depth = max_depth     

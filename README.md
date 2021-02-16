@@ -57,9 +57,13 @@ Subdirectories `test/` and `train/` within each contain the graphs after removin
 
 ## Example usage (from `src/` dir)
 
-`python main.py -G yeast -sm static -em netmf -k 10000`
+Run on Yeast dataset with MG grouping:
 
-`python main.py -G yeast -sm static -em netmf -k 10000 -SG False -CG False --bailout_tol 0.0`
+`python main.py -G yeast -sm static -em netmf1 -k 10000`
+
+Run on Yeast dataset with DG grouping:
+
+`python main.py -G yeast -sm static -em netmf1 -k 10000 -SG False -CG False --bailout_tol 0.0`
 
 #### NMF+BAG baseline
 
@@ -74,7 +78,7 @@ Subdirectories `test/` and `train/` within each contain the graphs after removin
 
 `--method / -m {method} (Optional; Default = 'LinkWaldo')` Specifies the method (one of `'LinkWaldo', 'lapm', 'cn', 'js', 'aa', 'nmf+bag'`).
 
-`--embedding_method {the proximity method to use}` Specifies the proximity method to use within equivalence classes (one of `'netmf1', 'netmf2', 'bine', 'aa'`).
+`--embedding_method {the proximity method to use} (Optional; Default = 'netmf2')` Specifies the proximity method to use within equivalence classes (one of `'netmf1', 'netmf2', 'bine', 'aa'`).
 
 `--DG / -DG {True/False} (Optional; Default = True)` Whether or not to use Degree Grouping (Sec. IV.A).
 
@@ -86,23 +90,23 @@ Subdirectories `test/` and `train/` within each contain the graphs after removin
 
 `--bailout_tol / -b_tol (Optional; Default = 0.5)` (Sec. IV.C and V.D)
 
-`--sampling_method / -sm {'static'/'temporal'}` Whether the graph is temporal or static (Table II).
+`--sampling_method / -sm {'static'/'temporal'} (Optional; Default = 'static')` Whether the graph is temporal or static (Table II).
 
-`--num_groups / -num_groups {int}` The number of groups to use for a grouping (Sec. V.D).
+`--num_groups / -num_groups {int} (Optional; Default = 25)` The number of groups to use for a grouping (Sec. V.D).
 
-`--num_groups_alt / -num_groups_alt {int}` If there are multiple groupings, this allows non-DG groupings to use a different number of groups (Sec. V.D).
+`--num_groups_alt / -num_groups_alt {int} (Optional; Default = 5)` If there are multiple groupings, this allows non-DG groupings to use a different number of groups (Sec. V.D).
 
-`--percent_test / -test {int}` The percentage of the graph used for evalution (see "Generating train/test splits secton" above).
+`--percent_test / -test {float} (Optional; Default = 20.0)` The percentage of the graph used for evalution (see "Generating train/test splits secton" above).
 
-`--seed / -s` The seed to run on (see "Generating train/test splits secton" above).
+`--seed / -s {int} (Optional; Default = 0)` The seed to run on (see "Generating train/test splits secton" above).
 
-`--bipartite / -bip {True/False}` Whether or not the graph is bipartite.
+`--bipartite / -bip {True/False} (Optional; Default = False)` Whether or not the graph is bipartite.
 
-`--output_override / -oo {None or file_path}` If None, the output will go to its default location (`data/{sample_method}/`), otherwise it will go to the path specified by this parameter.
+`--output_override / -oo {None or file_path} (Optional; Default = None)` If None, the output will go to its default location (`data/{sample_method}/`), otherwise it will go to the path specified by this parameter.
 
 `--bag_epsilon / -bag_epsilon {float} (Optional; Default = 1.0)` The epsilon parameter for the NMF+Bag baseline (Sec. V.B).
 
 `--skip_output / -skip_output {True/False} (Optional; Default = False)` If True, not output files will be created.
 
-`--force_emb / force_emb {True / False} (Optiona; Default = False)` If True, then even if the embeddings have already been generated for the input graph, they will be re-generated.
+`--force_emb / force_emb {True / False} (Optional; Default = False)` If True, then even if the embeddings have already been generated for the input graph, they will be re-generated.
 
