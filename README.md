@@ -14,7 +14,7 @@ If used, please cite:
 }
 ```
 
-![alt text](https://github.com/GemsLab/LinkWaldo/blob/master/fig.pdf?raw=true)
+![alt text](https://github.com/GemsLab/LinkWaldo/blob/master/fig.png?raw=true)
 
 ## Setup
 
