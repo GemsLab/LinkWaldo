@@ -1,7 +1,6 @@
 from selector import Selector
 from time import time
 import numpy as np
-import cupy as cp
 import random
 from scipy.sparse import csr_matrix, lil_matrix
 
